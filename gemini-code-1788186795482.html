@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Idea Bank</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: #12151e;
+      --neon-green: #00ffcc;
+      --neon-pink: #ff007f;
+      --text: #e2e8f0;
+      --border: #1a2332;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+    }
+
+    h1 {
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+      text-align: center;
+    }
+
+    .create-card {
+      background: var(--card-bg);
+      border: 1px solid var(--neon-green);
+      box-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: #050608;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus {
+      outline: 1px solid var(--neon-green);
+    }
+
+    button {
+      background: transparent;
+      color: var(--neon-pink);
+      border: 1px solid var(--neon-pink);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(255, 0, 127, 0.3);
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--neon-pink);
+      color: #000;
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.8);
+    }
+
+    .post {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .vote-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--neon-green);
+      font-weight: bold;
+    }
+
+    .post-content h3 {
+      margin: 0 0 8px 0;
+      color: #fff;
+    }
+
+    .post-content p {
+      margin: 0;
+      color: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>💡 IDEA BANK</h1>
+
+    <div class="create-card">
+      <input type="text" id="title" placeholder="Idea Title">
+      <textarea id="content" rows="3" placeholder="Describe your idea..."></textarea>
+      <button onclick="submitIdea()">Post Idea</button>
+    </div>
+
+    <div id="feed">Loading ideas...</div>
+  </div>
+
+  <script>
+    const API_URL = '/api/posts';
+
+    async function loadPosts() {
+      try {
+        const res = await fetch(API_URL);
+        const posts = await res.json();
+        const feed = document.getElementById('feed');
+        feed.innerHTML = '';
+
+        posts.forEach(post => {
+          feed.innerHTML += `
+            <div class="post">
+              <div class="vote-box">
+                <span>▲</span>
+                <span>${post.votes}</span>
+              </div>
+              <div class="post-content">
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        document.getElementById('feed').innerText = 'Failed to load posts.';
+      }
+    }
+
+    async function submitIdea() {
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      if (!title || !content) return alert('Please complete both fields');
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+      loadPosts();
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
