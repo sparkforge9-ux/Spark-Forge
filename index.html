@@ -142,6 +142,71 @@
     <div class="fixed top-1/4 left-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
     <div class="fixed bottom-1/4 right-10 w-96 h-96 bg-neon-purple/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style="animation-delay: 1.5s;"></div>
 
+    <!-- Auth Modal Overlay -->
+    <div id="authModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-4 transition-all duration-300">
+        <div class="relative z-10 max-w-md w-full text-center space-y-6 animate-pop-in glass-card p-8 rounded-3xl border border-slate-800 shadow-2xl">
+            <div class="flex justify-end -mt-2 -mr-2">
+                <button onclick="toggleAuthModal(false)" class="text-slate-400 hover:text-white p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="mx-auto w-16 h-16 bg-gradient-to-tr from-brand-600 via-neon-cyan to-neon-purple p-0.5 rounded-2xl shadow-lg flex items-center justify-center -mt-6">
+                <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                    <i data-lucide="zap" class="w-8 h-8 text-brand-400"></i>
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-black tracking-wider text-white uppercase">
+                Spark<span class="bg-gradient-to-r from-brand-400 to-neon-cyan bg-clip-text text-transparent">Forge</span> Auth
+            </h1>
+
+            <div id="authErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 p-3 rounded-xl"></div>
+            <div id="authSuccessMsg" class="hidden text-xs text-neon-emerald bg-neon-emerald/10 border border-neon-emerald/30 p-3 rounded-xl"></div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <label class="flex items-center space-x-2 text-slate-400 cursor-pointer">
+                        <input type="checkbox" id="isSignUpMode" class="rounded bg-slate-900 border-slate-700 text-brand-500 focus:ring-0">
+                        <span>Create new account (Sign Up)</span>
+                    </label>
+                    <button type="button" onclick="handlePasswordReset()" class="text-brand-400 hover:underline">Forgot password?</button>
+                </div>
+
+                <button type="submit" id="authSubmitBtn" class="btn-pop w-full shimmer-btn py-3.5 text-white font-bold rounded-xl text-sm shadow-lg shadow-brand-500/30 flex items-center justify-center space-x-2">
+                    <span id="authBtnText">Sign In</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-slate-800"></div>
+                <span class="flex-shrink mx-4 text-xs text-slate-500 uppercase">Or continue with</span>
+                <div class="flex-grow border-t border-slate-800"></div>
+            </div>
+
+            <button onclick="handleGoogleSignIn()" class="btn-pop w-full bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-200 py-3 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 transition-colors">
+                <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span>Sign in with Google</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Welcome Screen -->
     <div id="welcomeScreen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-4 transition-all duration-700">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-slate-950 to-slate-950 pointer-events-none"></div>
 
@@ -167,6 +232,7 @@
         </div>
     </div>
 
+    <!-- Onboarding Overlay -->
     <div id="onboardingOverlay" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 transition-all duration-700">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/30 via-slate-950 to-slate-950 pointer-events-none"></div>
 
@@ -237,8 +303,15 @@
         </div>
     </div>
 
+    <!-- Main Platform -->
     <div id="mainPlatform" class="opacity-0 transition-opacity duration-700 flex flex-col min-h-screen">
         
+        <!-- Verification Banner -->
+        <div id="verificationBanner" class="hidden bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-center text-xs text-amber-300 flex items-center justify-center space-x-3">
+            <span id="verificationText">Your email is not verified. Please verify your email account to unlock full features.</span>
+            <button onclick="resendVerificationEmail()" class="underline font-bold hover:text-amber-200">Resend Verification</button>
+        </div>
+
         <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchPage('home')">
@@ -260,7 +333,7 @@
                     <button onclick="switchPage('ideabank')" class="btn-pop text-neon-cyan font-semibold flex items-center space-x-2 bg-neon-cyan/10 px-3.5 py-1.5 rounded-xl border border-neon-cyan/30">
                         <i data-lucide="globe" class="w-4 h-4"></i>
                         <span>Global Idea Bank</span>
-                        <span id="headerBadge" class="ml-1 px-2 py-0.5 text-[10px] font-black bg-neon-cyan text-slate-950 rounded-full shadow-sm">1,240+</span>
+                        <span id="headerBadge" class="ml-1 px-2 py-0.5 text-[10px] font-black bg-neon-cyan text-slate-950 rounded-full shadow-sm">30+</span>
                     </button>
                     <a href="#assistant" onclick="switchPage('home')" class="hover:text-white transition-colors flex items-center space-x-1">
                         <i data-lucide="bot" class="w-4 h-4"></i>
@@ -269,13 +342,26 @@
                 </nav>
 
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm transition-transform hover:scale-105">
+                    <div class="hidden sm:flex items-center bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm transition-transform hover:scale-105">
                         <i data-lucide="award" class="w-4 h-4 text-neon-amber mr-1.5 animate-bounce-subtle"></i>
                         <span id="headerPointsScore" class="text-xs font-black text-neon-amber">0 PTS</span>
                     </div>
-                    <button onclick="openModal()" class="btn-pop inline-flex items-center justify-center px-4 py-2 text-sm text-white bg-brand-500 hover:bg-brand-600 rounded-xl transition-all duration-200 shadow-md shadow-brand-500/20 font-semibold">
+                    <button onclick="openModal()" class="hidden lg:inline-flex btn-pop items-center justify-center px-4 py-2 text-sm text-white bg-brand-500 hover:bg-brand-600 rounded-xl transition-all duration-200 shadow-md shadow-brand-500/20 font-semibold">
                         <i data-lucide="plus" class="w-4 h-4 mr-1.5"></i> Submit Idea
                     </button>
+
+                    <!-- Auth Widget Integration -->
+                    <div id="authWidgetContainer">
+                        <button id="openAuthBtn" onclick="toggleAuthModal(true)" class="btn-pop inline-flex items-center justify-center px-4 py-2 text-sm text-white bg-brand-600 hover:bg-brand-500 rounded-xl transition-all duration-200 font-semibold shadow-lg shadow-brand-500/20">
+                            <i data-lucide="log-in" class="w-4 h-4 mr-1.5"></i> Sign In / Sign Up
+                        </button>
+                        <div id="userProfileDisplay" class="hidden items-center space-x-3">
+                            <span id="userEmailSpan" class="text-xs text-slate-300 font-medium hidden sm:inline"></span>
+                            <button onclick="handleLogout()" class="btn-pop inline-flex items-center justify-center px-4 py-2 text-sm text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-xl transition-all duration-200 font-semibold">
+                                <i data-lucide="log-out" class="w-4 h-4 mr-1.5"></i> Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -303,7 +389,7 @@
                         </a>
                         <button onclick="switchPage('ideabank')" class="btn-pop shimmer-btn px-8 py-3.5 text-white font-extrabold rounded-xl shadow-xl shadow-brand-500/30 flex items-center justify-center space-x-2">
                             <i data-lucide="globe" class="w-5 h-5 text-neon-cyan"></i>
-                            <span>Explore Idea Bank (1,240+)</span>
+                            <span>Explore Idea Bank</span>
                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -369,7 +455,7 @@
                                 <i data-lucide="leaf" class="w-5 h-5"></i>
                             </div>
                             <h3 class="font-bold text-white group-hover:text-emerald-400 transition-colors">CleanTech</h3>
-                            <p class="text-xs text-slate-400 mt-1">280+ National Projects</p>
+                            <p class="text-xs text-slate-400 mt-1">Sustainable Energy & Green</p>
                         </div>
 
                         <div onclick="switchPage('ideabank', 'HealthTech')" class="category-tab glass-card p-5 rounded-2xl border border-slate-800/80 cursor-pointer group">
@@ -377,7 +463,7 @@
                                 <i data-lucide="activity" class="w-5 h-5"></i>
                             </div>
                             <h3 class="font-bold text-white group-hover:text-rose-400 transition-colors">HealthTech</h3>
-                            <p class="text-xs text-slate-400 mt-1">210+ National Projects</p>
+                            <p class="text-xs text-slate-400 mt-1">Healthcare & Diagnostics</p>
                         </div>
 
                         <div onclick="switchPage('ideabank', 'FinTech')" class="category-tab glass-card p-5 rounded-2xl border border-slate-800/80 cursor-pointer group">
@@ -385,7 +471,7 @@
                                 <i data-lucide="coins" class="w-5 h-5"></i>
                             </div>
                             <h3 class="font-bold text-white group-hover:text-amber-400 transition-colors">FinTech</h3>
-                            <p class="text-xs text-slate-400 mt-1">195+ National Projects</p>
+                            <p class="text-xs text-slate-400 mt-1">Banking & Microfinance</p>
                         </div>
 
                         <div onclick="switchPage('ideabank', 'AI / ML')" class="category-tab glass-card p-5 rounded-2xl border border-slate-800/80 cursor-pointer group">
@@ -393,7 +479,7 @@
                                 <i data-lucide="cpu" class="w-5 h-5"></i>
                             </div>
                             <h3 class="font-bold text-white group-hover:text-brand-400 transition-colors">AI & Robotics</h3>
-                            <p class="text-xs text-slate-400 mt-1">340+ National Projects</p>
+                            <p class="text-xs text-slate-400 mt-1">Machine Learning & Automation</p>
                         </div>
                     </div>
                 </div>
@@ -446,16 +532,16 @@
                             <span>International Innovation Repository</span>
                         </div>
                         <h1 class="text-3xl sm:text-4xl font-extrabold text-white">Global Idea Bank</h1>
-                        <p class="text-slate-400 text-sm mt-1">Exploring thousands of nationalized startup blueprints categorized by country and sector.</p>
+                        <p class="text-slate-400 text-sm mt-1">Exploring unique, curated startup blueprints from diverse countries across the globe.</p>
                     </div>
 
                     <div class="flex items-center space-x-4 bg-slate-900/80 p-3 rounded-2xl border border-slate-800 text-xs">
                         <div class="text-center px-3 border-r border-slate-800">
-                            <span class="block text-white font-black text-base" id="totalIdeasCount">1,248</span>
-                            <span class="text-slate-500 text-[10px]">National Ideas</span>
+                            <span class="block text-white font-black text-base" id="totalIdeasCount">32</span>
+                            <span class="text-slate-500 text-[10px]">Unique Ideas</span>
                         </div>
                         <div class="text-center px-3 border-r border-slate-800">
-                            <span class="block text-neon-cyan font-black text-base">48</span>
+                            <span class="block text-neon-cyan font-black text-base">20+</span>
                             <span class="text-slate-500 text-[10px]">Countries</span>
                         </div>
                         <div class="text-center px-3">
@@ -488,19 +574,21 @@
 
                         <div>
                             <select id="bankCountryFilter" onchange="filterBank()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-brand-500">
-                                <option value="ALL">All Nations / Flags (48)</option>
-                                <option value="United States">🇺🇸 United States</option>
-                                <option value="India">🇮🇳 India</option>
-                                <option value="Kenya">🇰🇪 Kenya</option>
+                                <option value="ALL">All Nations / Flags</option>
                                 <option value="Japan">🇯🇵 Japan</option>
-                                <option value="Germany">🇩🇪 Germany</option>
-                                <option value="Brazil">🇧🇷 Brazil</option>
-                                <option value="United Kingdom">🇬🇧 United Kingdom</option>
-                                <option value="Singapore">🇸🇬 Singapore</option>
+                                <option value="Kenya">🇰🇪 Kenya</option>
+                                <option value="Peru">🇵🇪 Peru</option>
+                                <option value="Norway">🇳🇴 Norway</option>
                                 <option value="Canada">🇨🇦 Canada</option>
+                                <option value="Denmark">🇩🇰 Denmark</option>
+                                <option value="India">🇮🇳 India</option>
+                                <option value="Brazil">🇧🇷 Brazil</option>
+                                <option value="Estonia">🇪🇪 Estonia</option>
+                                <option value="Germany">🇩🇪 Germany</option>
+                                <option value="Singapore">🇸🇬 Singapore</option>
                                 <option value="Nigeria">🇳🇬 Nigeria</option>
                                 <option value="Australia">🇦🇺 Australia</option>
-                                <option value="Estonia">🇪🇪 Estonia</option>
+                                <option value="South Korea">🇰🇷 South Korea</option>
                             </select>
                         </div>
 
@@ -599,13 +687,16 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Country / Nation</label>
                             <select id="modalCountry" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-                                <option value="United States">🇺🇸 United States</option>
-                                <option value="India">🇮🇳 India</option>
-                                <option value="Kenya">🇰🇪 Kenya</option>
                                 <option value="Japan">🇯🇵 Japan</option>
-                                <option value="Germany">🇩🇪 Germany</option>
+                                <option value="Kenya">🇰🇪 Kenya</option>
+                                <option value="Peru">🇵🇪 Peru</option>
+                                <option value="Norway">🇳🇴 Norway</option>
+                                <option value="Canada">🇨🇦 Canada</option>
+                                <option value="Denmark">🇩🇰 Denmark</option>
+                                <option value="India">🇮🇳 India</option>
                                 <option value="Brazil">🇧🇷 Brazil</option>
-                                <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                                <option value="Estonia">🇪🇪 Estonia</option>
+                                <option value="Germany">🇩🇪 Germany</option>
                             </select>
                         </div>
                     </div>
@@ -648,7 +739,37 @@
         </footer>
     </div>
 
-    <script>
+    <!-- Firebase SDK & Advanced Integration Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup,
+            sendPasswordResetEmail,
+            sendEmailVerification 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWsIbARFoFaXwjgKGnjMyLWcwuEwOcWhs",
+            authDomain: "spark-forge-24546.firebaseapp.com",
+            projectId: "spark-forge-24546",
+            storageBucket: "spark-forge-24546.firebasestorage.app",
+            messagingSenderId: "1067170553726",
+            appId: "1:1067170553726:web:b46f86de4fd43be8e69d2f",
+            measurementId: "G-RY0ZPNQNR6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
         lucide.createIcons();
 
         // 1. Points State Management
@@ -681,7 +802,7 @@
             updatePointsDisplay();
         });
 
-        function startOnboardingFlow() {
+        window.startOnboardingFlow = function() {
             const welcome = document.getElementById('welcomeScreen');
             const onboarding = document.getElementById('onboardingOverlay');
             const step1 = document.getElementById('step1');
@@ -692,12 +813,12 @@
                 onboarding.classList.remove('hidden');
                 step1.classList.add('animate-pop-in');
             }, 600);
-        }
+        };
 
         // 3. Multi-Step Onboarding Data & Transitions
         let ideaData = { name: 'Your Idea', reason: '', motto: '' };
 
-        function goToStep2(e) {
+        window.goToStep2 = function(e) {
             e.preventDefault();
             const val = document.getElementById('ideaNameInput').value.trim();
             if(!val) return;
@@ -721,9 +842,9 @@
                 document.getElementById('dot2').classList.replace('bg-slate-800', 'bg-neon-cyan');
                 document.getElementById('dot2').classList.add('scale-125', 'shadow-lg', 'shadow-neon-cyan/50');
             }, 300);
-        }
+        };
 
-        function goToStep3(e) {
+        window.goToStep3 = function(e) {
             e.preventDefault();
             const val = document.getElementById('ideaReasonInput').value.trim();
             if(!val) return;
@@ -745,9 +866,9 @@
                 document.getElementById('dot3').classList.replace('bg-slate-800', 'bg-neon-purple');
                 document.getElementById('dot3').classList.add('scale-125', 'shadow-lg', 'shadow-neon-purple/50');
             }, 300);
-        }
+        };
 
-        function startWorkspace(e) {
+        window.startWorkspace = function(e) {
             e.preventDefault();
             const val = document.getElementById('ideaMottoInput').value.trim();
             if(!val) return;
@@ -764,7 +885,7 @@
                 Welcome! I've initialized the AI workspace for <strong>${ideaData.name}</strong>.<br/><br/>
                 <strong>Mission Purpose:</strong> ${ideaData.reason}<br/>
                 <strong>Motto:</strong> "${ideaData.motto}"<br/><br/>
-                Check your personalized <strong>Daily Tasks</strong> or explore nationalized ideas in the <strong>Global Idea Bank</strong>!
+                Check your personalized <strong>Daily Tasks</strong> or explore unique international ideas in the <strong>Global Idea Bank</strong>!
             `;
 
             renderDailyTasks();
@@ -777,7 +898,7 @@
                 overlay.style.display = 'none';
                 main.classList.remove('opacity-0');
             }, 700);
-        }
+        };
 
         // 4. Daily Execution Blueprint Tasks
         let dailyTasks = [
@@ -843,7 +964,7 @@
             lucide.createIcons();
         }
 
-        function toggleTask(id) {
+        window.toggleTask = function(id) {
             const task = dailyTasks.find(t => t.id === id);
             if(task) {
                 task.completed = !task.completed;
@@ -851,52 +972,106 @@
                 updatePointsDisplay();
                 renderDailyTasks();
             }
-        }
+        };
 
-        function generateFreshDailyTasks() {
+        window.generateFreshDailyTasks = function() {
             dailyTasks = freshTaskPool[taskPoolIndex % freshTaskPool.length].map(t => ({...t, completed: false}));
             taskPoolIndex++;
             renderDailyTasks();
-        }
-
-        // 5. Global Idea Repository & Flag Data
-        const flagMap = {
-            'United States': '🇺🇸', 'India': '🇮🇳', 'Kenya': '🇰🇪', 'Japan': '🇯🇵',
-            'Germany': '🇩🇪', 'Brazil': '🇧🇷', 'United Kingdom': '🇬🇧', 'Singapore': '🇸🇬',
-            'Canada': '🇨🇦', 'Nigeria': '🇳🇬', 'Australia': '🇦🇺', 'Estonia': '🇪🇪'
         };
 
-        const prefixes = ["Eco", "Cyber", "Agri", "Bio", "Neuro", "Aqua", "Quantum", "Solar", "Urban", "Nano", "Hyper", "Apex"];
-        const suffixes = ["Vault", "Pulse", "Sync", "Grid", "Flow", "Shield", "Forge", "Link", "Core", "Node", "Wave", "Scale"];
-        const categories = ["CleanTech", "Cybersecurity", "HealthTech", "AgriTech", "FinTech", "AI / ML", "EduTech", "UrbanTech"];
-        const countries = Object.keys(flagMap);
+        // 5. Global Idea Repository
+        const flagMap = {
+            'Japan': '🇯🇵', 'Kenya': '🇰🇪', 'Peru': '🇵🇪', 'Norway': '🇳🇴',
+            'Canada': '🇨🇦', 'Denmark': '🇩🇰', 'India': '🇮🇳', 'Brazil': '🇧🇷',
+            'Estonia': '🇪🇪', 'Germany': '🇩🇪', 'Singapore': '🇸🇬', 'Nigeria': '🇳🇬',
+            'Australia': '🇦🇺', 'South Korea': '🇰🇷', 'United Kingdom': '🇬🇧', 'United States': '🇺🇸'
+        };
 
-        let globalIdeaBank = generateNationalIdeas(120);
-
-        function generateNationalIdeas(count) {
-            let arr = [];
-            for(let i = 1; i <= count; i++) {
-                const cat = categories[i % categories.length];
-                const country = countries[i % countries.length];
-                const p = prefixes[i % prefixes.length];
-                const s = suffixes[(i * 3) % suffixes.length];
-                
-                arr.push({
-                    id: `idea-${i}`,
-                    name: `${p}${s} ${i > 24 ? 'System' : ''}`,
-                    country: country,
-                    flag: flagMap[country],
-                    category: cat,
-                    hook: `Nationalized ${cat} infrastructure initiative addressing resource management and automated intelligence in ${country}.`,
-                    secretSpecs: `Built using high-performance microservices, WebAssembly compute modules, decentralized telemetry protocols, and localized AI node clusters.`,
-                    upvotes: Math.floor(Math.random() * 400) + 12
-                });
+        let globalIdeaBank = [
+            {
+                id: 'idea-1',
+                name: 'Urban Rooftop Farming Network',
+                country: 'Japan',
+                flag: '🇯🇵',
+                category: 'CleanTech',
+                hook: 'Transforming unused high-rise city rooftops in Tokyo into high-yield automated hydroponic gardens to supply fresh produce locally.',
+                secretSpecs: 'IoT climate sensors, nutrient dosing pumps controlled via edge microcontrollers, and solar-boosted LED lighting grids.',
+                upvotes: 342
+            },
+            {
+                id: 'idea-2',
+                name: 'Andean Textile Digital Marketplace',
+                country: 'Peru',
+                flag: '🇵🇪',
+                category: 'FinTech',
+                hook: 'Connecting indigenous artisan cooperatives in Cusco directly with global digital buyers to ensure fair trade and heritage craft preservation.',
+                secretSpecs: 'Mobile-first P2P escrow platform integrated with local micro-lending smart contracts and decentralized provenance tracking.',
+                upvotes: 289
+            },
+            {
+                id: 'idea-3',
+                name: 'Autonomous Marine Plastic Cleanup Drones',
+                country: 'Norway',
+                flag: '🇳🇴',
+                category: 'CleanTech',
+                hook: 'Solar-powered aquatic surface drones designed to navigate fjords and coastal shipping lanes autonomously to collect floating macro-plastics.',
+                secretSpecs: 'Computer vision obstacle avoidance, solar battery regeneration, and automated net compaction algorithms.',
+                upvotes: 412
+            },
+            {
+                id: 'idea-4',
+                name: 'Solar-Powered Mobile Medical Vans',
+                country: 'Kenya',
+                flag: '🇰🇪',
+                category: 'HealthTech',
+                hook: 'Equipped electric vans bringing primary healthcare diagnostics, vaccination drives, and telemedicine clinics to remote rural communities.',
+                secretSpecs: 'Satellite uplink connectivity, onboard blood centrifuge, and offline-first encrypted patient record synchronization.',
+                upvotes: 375
+            },
+            {
+                id: 'idea-5',
+                name: 'Indigenous Dialect AI Preservation App',
+                country: 'Canada',
+                flag: '🇨🇦',
+                category: 'EduTech',
+                hook: 'Interactive voice-recognition software engineered to record, translate, and teach endangered native North American languages.',
+                secretSpecs: 'Custom acoustic phoneme models trained on low-resource audio datasets with offline speech synthesis.',
+                upvotes: 310
+            },
+            {
+                id: 'idea-6',
+                name: 'Commuter Cycling Fitness Rewards Hub',
+                country: 'Denmark',
+                flag: '🇩🇰',
+                category: 'UrbanTech',
+                hook: 'City-wide bike-sharing and tracking platform that measures physical activity and rewards daily carbon-free commuters with municipal transit discounts.',
+                secretSpecs: 'Encrypted GPS telemetry, zero-knowledge proof fitness validation, and municipal tax-credit API integrations.',
+                upvotes: 254
+            },
+            {
+                id: 'idea-7',
+                name: 'Multilingual Legal LLM Assistant',
+                country: 'India',
+                flag: '🇮🇳',
+                category: 'AI / ML',
+                hook: 'Specialized artificial intelligence parser to decode regional case files and translate constitutional documents into 22 scheduled national languages.',
+                secretSpecs: 'Fine-tuned Indic-Transformer language models, Retrieval-Augmented Generation (RAG) vector database over Supreme Court archives.',
+                upvotes: 498
+            },
+            {
+                id: 'idea-8',
+                name: 'Amazon Deforestation Satellite Guard',
+                country: 'Brazil',
+                flag: '🇧🇷',
+                category: 'Cybersecurity',
+                hook: 'Real-time acoustic and multispectral satellite monitoring network to detect illegal logging operations and unauthorized mining instantly.',
+                secretSpecs: 'Edge-AI audio sensors listening for chainsaw frequencies coupled with Sentinel-2 optical imagery classification pipelines.',
+                upvotes: 520
             }
-            return arr;
-        }
+        ];
 
-        // Page Switcher Navigation
-        function switchPage(page, filterCategory = null) {
+        window.switchPage = function(page, filterCategory = null) {
             const home = document.getElementById('homePage');
             const bank = document.getElementById('ideaBankPage');
 
@@ -917,9 +1092,8 @@
                 home.classList.add('animate-pop-in');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-        }
+        };
 
-        // Render Bank Grid
         function renderBankGrid(filteredData = null) {
             const grid = document.getElementById('bankGrid');
             if(!grid) return;
@@ -980,8 +1154,7 @@
             lucide.createIcons();
         }
 
-        // Filtering Logic
-        function filterBank() {
+        window.filterBank = function() {
             const query = document.getElementById('bankSearchInput').value.toLowerCase();
             const category = document.getElementById('bankCategoryFilter').value;
             const country = document.getElementById('bankCountryFilter').value;
@@ -994,9 +1167,9 @@
             });
 
             renderBankGrid(filtered);
-        }
+        };
 
-        function setCategoryTab(cat) {
+        window.setCategoryTab = function(cat) {
             document.getElementById('bankCategoryFilter').value = cat;
             
             document.querySelectorAll('.category-tab').forEach(t => {
@@ -1011,23 +1184,33 @@
             }
 
             filterBank();
-        }
+        };
 
-        function resetFilters() {
+        window.resetFilters = function() {
             document.getElementById('bankSearchInput').value = '';
             document.getElementById('bankCategoryFilter').value = 'ALL';
             document.getElementById('bankCountryFilter').value = 'ALL';
             setCategoryTab('ALL');
-        }
+        };
 
-        function loadMoreIdeas() {
-            const freshIdeas = generateNationalIdeas(24);
-            globalIdeaBank = [...globalIdeaBank, ...freshIdeas];
+        window.loadMoreIdeas = function() {
+            const extraIdeas = [
+                {
+                    id: `idea-${Date.now()}-1`,
+                    name: 'Alpine Glacier Thermal Blanket Mesh',
+                    country: 'Switzerland',
+                    flag: '🇨🇭',
+                    category: 'CleanTech',
+                    hook: 'Geotextile reflective covers deployed across critical alpine glaciers during summer months to reduce seasonal ice melt by up to 60%.',
+                    secretSpecs: 'UV-stabilized mineral fibers, automated anchoring sensors, and micro-climate wind stress modeling.',
+                    upvotes: 184
+                }
+            ];
+            globalIdeaBank = [...globalIdeaBank, ...extraIdeas];
             filterBank();
-        }
+        };
 
-        // Modal Operations
-        function openViewModal(id) {
+        window.openViewModal = function(id) {
             const item = globalIdeaBank.find(i => i.id === id);
             if(!item) return;
 
@@ -1051,9 +1234,9 @@
             modal.classList.remove('hidden');
             content.classList.remove('animate-pop-out');
             content.classList.add('animate-pop-in');
-        }
+        };
 
-        function closeViewModal() {
+        window.closeViewModal = function() {
             const modal = document.getElementById('viewIdeaModal');
             const content = document.getElementById('viewModalContent');
             
@@ -1062,17 +1245,17 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 200);
-        }
+        };
 
-        function openModal() {
+        window.openModal = function() {
             const modal = document.getElementById('ideaModal');
             const content = document.getElementById('shareModalContent');
             modal.classList.remove('hidden');
             content.classList.remove('animate-pop-out');
             content.classList.add('animate-pop-in');
-        }
+        };
 
-        function closeModal() {
+        window.closeModal = function() {
             const modal = document.getElementById('ideaModal');
             const content = document.getElementById('shareModalContent');
             content.classList.remove('animate-pop-in');
@@ -1080,9 +1263,9 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 200);
-        }
+        };
 
-        function handleModalSubmit(e) {
+        window.handleModalSubmit = function(e) {
             e.preventDefault();
             const name = document.getElementById('modalIdeaName').value;
             const country = document.getElementById('modalCountry').value;
@@ -1104,10 +1287,9 @@
             closeModal();
             switchPage('ideabank');
             filterBank();
-        }
+        };
 
-        // Interactive AI Chat
-        function handleChatSubmit(e) {
+        window.handleChatSubmit = function(e) {
             e.preventDefault();
             const input = document.getElementById('userInput');
             const chatWindow = document.getElementById('chatWindow');
@@ -1135,7 +1317,7 @@
                         <strong>Strategic Recommendation:</strong><br/>
                         • Step 1: Complete today's task: "<em>${dailyTasks[0]?.title || 'Blueprint Spec'}</em>"<br/>
                         • Step 2: Leverage your motto: "<em>${ideaData.motto || 'Innovate Boldly'}</em>"<br/>
-                        • Step 3: Compare specifications with the <strong>${globalIdeaBank.length}</strong> national entries in the Idea Bank.
+                        • Step 3: Compare specifications with the <strong>${globalIdeaBank.length}</strong> unique international entries in the Idea Bank.
                     </div>
                 `;
                 chatWindow.appendChild(aiMsg);
@@ -1144,7 +1326,135 @@
             }, 500);
 
             chatWindow.scrollTop = chatWindow.scrollHeight;
+        };
+
+        // Firebase Auth Integration Logic
+        const authModal = document.getElementById('authModal');
+        const openAuthBtn = document.getElementById('openAuthBtn');
+        const userProfileDisplay = document.getElementById('userProfileDisplay');
+        const userEmailSpan = document.getElementById('userEmailSpan');
+        const authErrorMsg = document.getElementById('authErrorMsg');
+        const authSuccessMsg = document.getElementById('authSuccessMsg');
+        const isSignUpCheckbox = document.getElementById('isSignUpMode');
+        const authBtnText = document.getElementById('authBtnText');
+        const verificationBanner = document.getElementById('verificationBanner');
+
+        window.toggleAuthModal = function(show) {
+            if (show) {
+                authModal.classList.remove('hidden');
+            } else {
+                authModal.classList.add('hidden');
+                authErrorMsg.classList.add('hidden');
+                authSuccessMsg.classList.add('hidden');
+            }
+        };
+
+        if(isSignUpCheckbox) {
+            isSignUpCheckbox.addEventListener('change', (e) => {
+                authBtnText.innerText = e.target.checked ? "Sign Up" : "Sign In";
+            });
         }
+
+        window.handleAuthSubmit = async function(e) {
+            e.preventDefault();
+            authErrorMsg.classList.add('hidden');
+            authSuccessMsg.classList.add('hidden');
+
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            const isSignUp = isSignUpCheckbox.checked;
+
+            try {
+                if (isSignUp) {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await sendEmailVerification(userCredential.user);
+                    authSuccessMsg.classList.remove('hidden');
+                    authSuccessMsg.innerText = "Account created! Verification email sent. Please check your inbox.";
+                    setTimeout(() => toggleAuthModal(false), 2000);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    toggleAuthModal(false);
+                }
+                switchPage('home');
+            } catch (error) {
+                authErrorMsg.classList.remove('hidden');
+                if (error.code === 'auth/email-already-in-use') {
+                    authErrorMsg.innerText = "User already exists. Please sign in";
+                } else {
+                    authErrorMsg.innerText = "Email or password is incorrect";
+                }
+            }
+        };
+
+        window.handleGoogleSignIn = async function() {
+            authErrorMsg.classList.add('hidden');
+            try {
+                await signInWithPopup(auth, googleProvider);
+                toggleAuthModal(false);
+                switchPage('home');
+            } catch (error) {
+                authErrorMsg.classList.remove('hidden');
+                authErrorMsg.innerText = "Email or password is incorrect";
+            }
+        };
+
+        window.handlePasswordReset = async function() {
+            const email = document.getElementById('authEmail').value.trim();
+            authErrorMsg.classList.add('hidden');
+            authSuccessMsg.classList.add('hidden');
+
+            if (!email) {
+                authErrorMsg.classList.remove('hidden');
+                authErrorMsg.innerText = "Please enter your email address first to reset password.";
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                authSuccessMsg.classList.remove('hidden');
+                authSuccessMsg.innerText = "Password reset email sent. Check your inbox.";
+            } catch (error) {
+                authErrorMsg.classList.remove('hidden');
+                authErrorMsg.innerText = "Unable to send password reset email.";
+            }
+        };
+
+        window.resendVerificationEmail = async function() {
+            if (auth.currentUser) {
+                try {
+                    await sendEmailVerification(auth.currentUser);
+                    alert("Verification email resent successfully!");
+                } catch (err) {
+                    alert("Error sending verification email. Please try again later.");
+                }
+            }
+        };
+
+        window.handleLogout = async function() {
+            await signOut(auth);
+            toggleAuthModal(false);
+            switchPage('home');
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                openAuthBtn.classList.add('hidden');
+                userProfileDisplay.classList.remove('hidden');
+                userProfileDisplay.classList.add('flex');
+                userEmailSpan.innerText = user.email;
+
+                if (user.emailVerified) {
+                    verificationBanner.classList.add('hidden');
+                } else {
+                    verificationBanner.classList.remove('hidden');
+                }
+            } else {
+                userProfileDisplay.classList.remove('flex');
+                userProfileDisplay.classList.add('hidden');
+                openAuthBtn.classList.remove('hidden');
+                verificationBanner.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
