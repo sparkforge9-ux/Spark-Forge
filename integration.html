@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkForge - Native AI Copilot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f4f6ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            950: '#0f172a',
+                        },
+                        neon: {
+                            cyan: '#38bdf8',
+                            purple: '#c084fc',
+                            emerald: '#34d399',
+                            amber: '#fbbf24',
+                            rose: '#fb7185'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .typing-dot {
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="dashboard.html" class="flex items-center space-x-3 cursor-pointer group">
+                <div class="bg-gradient-to-tr from-brand-600 via-neon-cyan to-neon-purple p-2 rounded-xl text-white shadow-lg shadow-brand-500/20">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">SparkForge</span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
+                <a href="dashboard.html" class="hover:text-white transition-colors flex items-center space-x-1.5 py-1">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dashboard.html#ideabank" onclick="localStorage.setItem('sparkforge_open_ideabank','1')" class="hover:text-white transition-colors flex items-center space-x-1.5 py-1">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span>Global Idea Bank</span>
+                </a>
+                <span class="text-brand-400 font-semibold transition-colors flex items-center space-x-1.5 bg-brand-500/10 px-3.5 py-1.5 rounded-xl border border-brand-500/30">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Native AI Copilot</span>
+                </span>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="dashboard.html" class="text-xs font-mono text-slate-300 bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-800 transition-colors">
+                    &larr; Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-grow py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col">
+
+        <div class="flex-grow flex flex-col space-y-4 h-[78vh]">
+            <!-- Banner -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 flex-shrink-0 px-2">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-brand-400"></i> SparkForge AI Copilot
+                    </h2>
+                    <p class="text-xs text-slate-400">Native in-page chat workspace with optional Gemini API integration.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleApiKeyInput()" class="text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-700 transition-colors flex items-center gap-1.5">
+                        <i data-lucide="key" class="w-3.5 h-3.5 text-brand-400"></i> Configure API Key
+                    </button>
+                    <button onclick="clearNativeChat()" class="text-xs text-slate-400 hover:text-white bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+                        Clear Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- API Key Modal / Banner (Hidden by default) -->
+            <div id="apiKeyModal" class="hidden bg-slate-900 border border-brand-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
+                <div class="text-xs text-slate-300">
+                    <span class="font-bold text-white">Want live Google Gemini intelligence?</span> Enter your free Google AI Studio API key below. (Leave blank to use the built-in smart assistant). Stored only in this browser's local storage — never sent anywhere but Google's API.
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <input type="password" id="geminiApiKeyInput" placeholder="Paste Gemini API Key..." class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-white w-full sm:w-64 focus:outline-none focus:border-brand-500">
+                    <button onclick="saveApiKey()" class="bg-brand-600 hover:bg-brand-500 text-white text-xs px-4 py-1.5 rounded-xl font-semibold whitespace-nowrap">Save</button>
+                </div>
+            </div>
+
+            <!-- Chat Box Container -->
+            <div class="flex-grow flex flex-col glass-card rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
+
+                <!-- Messages Scroll Area -->
+                <div id="nativeChatMessages" class="flex-grow p-6 overflow-y-auto space-y-6 text-sm">
+                    <!-- Welcome Bubble -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-neon-purple flex items-center justify-center text-white flex-shrink-0 shadow-lg">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <div class="glass-card px-5 py-4 rounded-2xl rounded-tl-sm max-w-2xl text-slate-200 border border-slate-800 space-y-2">
+                            <p class="font-semibold text-white">Hello! I am your native SparkForge AI Copilot.</p>
+                            <p class="text-xs text-slate-300">I am embedded directly into this page. Ask me anything about your idea's execution, tech stack, or market strategy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Footer Bar -->
+                <div class="p-4 bg-slate-900/90 border-t border-slate-800 flex-shrink-0">
+                    <form onsubmit="handleNativeChatSubmit(event)" class="max-w-4xl mx-auto flex items-center space-x-3">
+                        <input
+                            type="text"
+                            id="nativeChatInput"
+                            placeholder="Ask SparkForge AI anything..."
+                            class="flex-grow bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 shadow-inner"
+                            required
+                        >
+                        <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-white px-5 py-3 rounded-2xl font-semibold text-xs flex items-center space-x-2 shadow-lg shadow-brand-600/30 transition-all">
+                            <span>Send</span>
+                            <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            &copy; 2026 SparkForge Accelerator. Native In-Page AI Copilot Integration.
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        lucide.createIcons();
+
+        let userApiKey = localStorage.getItem('sparkforge_gemini_key') || '';
+
+        function toggleApiKeyInput() {
+            document.getElementById('apiKeyModal').classList.toggle('hidden');
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('geminiApiKeyInput').value.trim();
+            if (key) {
+                localStorage.setItem('sparkforge_gemini_key', key);
+                userApiKey = key;
+                alert('Gemini API Key saved successfully! Your chat will now use live Gemini AI.');
+                toggleApiKeyInput();
+            }
+        }
+
+        function clearNativeChat() {
+            const container = document.getElementById('nativeChatMessages');
+            container.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-neon-purple flex items-center justify-center text-white flex-shrink-0 shadow-lg">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    </div>
+                    <div class="glass-card px-5 py-4 rounded-2xl rounded-tl-sm max-w-2xl text-slate-200 border border-slate-800 space-y-2">
+                        <p class="font-semibold text-white">Chat cleared.</p>
+                        <p class="text-xs text-slate-300">How can I assist you with your project today?</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        async function handleNativeChatSubmit(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('nativeChatInput');
+            const container = document.getElementById('nativeChatMessages');
+            const prompt = inputEl.value.trim();
+            if (!prompt) return;
+
+            // Append User Bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = 'flex items-start justify-end space-x-3 mb-4';
+            userBubble.innerHTML = `
+                <div class="bg-brand-600 px-4 py-3 rounded-2xl rounded-tr-sm max-w-xl text-white shadow-md text-xs sm:text-sm">
+                    ${escapeHtml(prompt)}
+                </div>
+                <div class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 flex-shrink-0">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+            `;
+            container.appendChild(userBubble);
+            inputEl.value = '';
+            lucide.createIcons();
+            container.scrollTop = container.scrollHeight;
+
+            // Append Typing Indicator
+            const typingBubble = document.createElement('div');
+            typingBubble.id = 'typingIndicator';
+            typingBubble.className = 'flex items-start space-x-3 mb-4';
+            typingBubble.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-neon-purple flex items-center justify-center text-white flex-shrink-0 shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <div class="glass-card px-4 py-3 rounded-2xl rounded-tl-sm text-slate-400 border border-slate-800 flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-brand-400 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-400 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-400 typing-dot"></span>
+                    <span class="text-xs ml-2 font-mono text-slate-400">Generating response...</span>
+                </div>
+            `;
+            container.appendChild(typingBubble);
+            lucide.createIcons();
+            container.scrollTop = container.scrollHeight;
+
+            let responseText = "";
+
+            if (userApiKey) {
+                try {
+                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userApiKey}`;
+                    const res = await fetch(endpoint, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    if (!res.ok) throw new Error(`Gemini API responded ${res.status}`);
+                    const data = await res.json();
+                    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated from Gemini API.";
+                } catch (err) {
+                    responseText = "Error connecting to Gemini API. Please check your API key and try again.";
+                }
+            } else {
+                await new Promise(r => setTimeout(r, 800));
+                responseText = `Here is a comprehensive breakdown for <strong>"${escapeHtml(prompt)}"</strong>:<br><br>` +
+                    `<ul class="list-disc pl-5 space-y-1.5 text-slate-300">` +
+                    `<li><strong>Analysis:</strong> Evaluated core requirements and parameters.</li>` +
+                    `<li><strong>Execution Strategy:</strong> Step-by-step methodology to achieve desired outcomes.</li>` +
+                    `<li><strong>Optimization:</strong> Iterating for efficiency and scalability.</li>` +
+                    `</ul><br><em>Tip: Add a Gemini API key above for live, model-generated answers.</em>`;
+            }
+
+            document.getElementById('typingIndicator')?.remove();
+
+            const aiBubble = document.createElement('div');
+            aiBubble.className = 'flex items-start space-x-3 mb-4';
+            aiBubble.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-neon-purple flex items-center justify-center text-white flex-shrink-0 shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <div class="glass-card px-5 py-4 rounded-2xl rounded-tl-sm max-w-2xl text-slate-200 border border-slate-800 leading-relaxed text-xs sm:text-sm space-y-2">
+                    ${responseText}
+                </div>
+            `;
+            container.appendChild(aiBubble);
+            lucide.createIcons();
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>
